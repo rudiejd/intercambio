@@ -6,7 +6,7 @@ defmodule Intercambio.Alert do
   alias Intercambio.Translate
   require Logger
 
-  @languages ["es"]
+  @languages ["es", "pt", "zh"]
   @translatable_fields ["header_text", "description"]
 
   def add_translations_to_alerts(alert_feed) do
@@ -40,19 +40,17 @@ defmodule Intercambio.Alert do
          %{"translation" => [%{"language" => "en", "text" => english_text} = english_translation]} =
            field
        ) do
-    translations = [
-      english_translation
-      # this is doing all the translation calls in serial. TODO: parallelize with tasks
-      | Enum.reduce(@languages, [], fn language, acc -> 
-        case Translate.translate(language, "en", english_text) do
+    translations = Enum.reduce(@languages, [english_translation], fn language, acc -> 
+        case Translate.translate(english_text, "en", language) do
           {:ok, translated_text} -> 
-            [acc | [make_translation(language, translated_text)]]
+            [make_translation(language, translated_text) | acc]
           {:error, error} ->
             Logger.error("Unable to translate #{english_text} into language #{language} with error #{IO.inspect(error)}")
             acc
         end
-      end) 
-    ]
+      end)
+    # put english at the beginning for ease of reference
+    |> Enum.reverse()
 
     %{field | "translation" => translations}
   end

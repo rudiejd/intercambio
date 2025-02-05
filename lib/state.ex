@@ -1,4 +1,5 @@
 defmodule Intercambio.State do
+  alias Intercambio.Persist
   require Logger
   use GenServer
 
@@ -45,9 +46,13 @@ defmodule Intercambio.State do
 
   def handle_info(:timeout, %{gtfs_feed_url: gtfs_feed_url, interval: interval} = state) do
     alerts = fetch_alerts(gtfs_feed_url)
-    |> Intercambio.Alert.add_translations_to_alerts()
+    translated_alerts = 
+      alerts 
+      |> Intercambio.Alert.add_translations_to_alerts()
 
-    {:noreply, %{state | alerts: alerts}, interval}
+    Persist.write_json_to_file(translated_alerts, "Alerts.json") 
+
+    {:noreply, %{state | alerts: alerts, translated_alerts: translated_alerts}, interval}
   end
 
   def start_link(init_arg) do

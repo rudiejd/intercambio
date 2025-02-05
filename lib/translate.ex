@@ -2,6 +2,7 @@ defmodule Intercambio.Translate do
   @moduledoc """
   Translate from a given language to another by calling a LibreTranslate server
   """
+  require Logger
 
   @translate_url "http://localhost:7500/translate"
 
@@ -23,6 +24,11 @@ defmodule Intercambio.Translate do
 
   defp handle_response({:error, error}) do
     {:error, error}
+  end
+
+  defp handle_response({_, %Req.Response{status: status, body: body}}) do
+    Logger.error("Received unknown response with status #{status} from LibreTranslate: #{IO.inspect(body)}")
+    {:error, "Unknown response received"}
   end
 
   defp build_request(text, from_language, to_language) do
