@@ -10,7 +10,7 @@ defmodule Intercambio.Application do
     children = [
       # Starts a worker by calling: Intercambio.Worker.start_link(arg)
       # {Intercambio.Worker, arg}
-      {Intercambio.GtfsRealTimeFetcher, spec_id: :fetcher, interval: 10_000, gtfs_feed_url: "https://cdn.mbta.com/realtime/Alerts.json"}
+      {Intercambio.State, spec_id: :fetcher, interval: 10_000, gtfs_feed_url: "https://cdn.mbta.com/realtime/Alerts.json"}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

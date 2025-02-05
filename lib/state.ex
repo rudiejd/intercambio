@@ -1,4 +1,4 @@
-defmodule Intercambio.GtfsRealTimeFetcher do
+defmodule Intercambio.State do
   require Logger
   use GenServer
 
