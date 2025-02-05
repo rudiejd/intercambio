@@ -1,0 +1,12 @@
+services:                                                                                                                                                                                                                                                                                                            
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    container_name: libretranslate
+    hostname: libretranslate
+    restart: "no"
+    ports:
+      - 7500:5000
+    healthcheck:
+      test: ["CMD-SHELL", "/venv/bin/python scripts/healthcheck.py"]
+    environment:
+      - LT_LOAD_ONLY=en,es,zh,pt
